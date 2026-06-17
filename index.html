@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TGIF – Find My Home 🏠</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(135deg,#f5f0ff 0%,#e8f4ff 100%);
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; padding:20px;
+}
+.header { text-align:center; margin-bottom:16px; }
+.badge {
+  display:inline-block; background:linear-gradient(135deg,#667eea,#764ba2);
+  color:#fff; font-size:10px; font-weight:800; letter-spacing:3px;
+  padding:4px 16px; border-radius:20px; margin-bottom:8px; text-transform:uppercase;
+}
+.header h1 { font-size:26px; font-weight:900; color:#333; }
+.header p  { font-size:12px; color:#888; margin-top:4px; }
+
+.card {
+  background:#fff; border-radius:20px; padding:28px;
+  width:100%; max-width:560px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.12);
+}
+
+/* ── FORM SCREEN ── */
+.screen { display:none; }
+.screen.active { display:block; }
+
+.form-screen h2 { font-size:20px; font-weight:900; color:#1a1a2e; margin-bottom:4px; }
+.form-screen .sub { font-size:12px; color:#888; margin-bottom:22px; }
+
+.field { margin-bottom:16px; }
+.field label { display:block; font-size:13px; font-weight:700; color:#333; margin-bottom:6px; }
+.field label span { color:#e74c3c; }
+.field input {
+  width:100%; padding:12px 16px; border:2px solid #e8e8e8;
+  border-radius:12px; font-size:14px; color:#333;
+  outline:none; transition:border-color 0.2s;
+}
+.field input:focus { border-color:#764ba2; }
+.field .hint { font-size:11px; color:#aaa; margin-top:5px; }
+.field .err  { font-size:11px; color:#e74c3c; margin-top:5px; display:none; }
+
+.radio-group { display:flex; flex-direction:column; gap:8px; }
+.radio-opt {
+  display:flex; align-items:center; gap:10px;
+  border:2px solid #e8e8e8; border-radius:12px; padding:11px 16px;
+  cursor:pointer; transition:border-color 0.2s,background 0.2s;
+}
+.radio-opt:hover { border-color:#764ba2; background:#faf8ff; }
+.radio-opt input { width:16px; height:16px; accent-color:#764ba2; }
+.radio-opt.selected { border-color:#764ba2; background:#f3f0ff; }
+.radio-opt span { font-size:13px; font-weight:600; color:#333; }
+
+.btn-primary {
+  width:100%; padding:14px; border:none; border-radius:14px;
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  color:#fff; font-size:15px; font-weight:800;
+  cursor:pointer; margin-top:8px; letter-spacing:0.5px;
+  box-shadow:0 6px 20px rgba(102,126,234,0.35);
+  transition:transform 0.1s, opacity 0.2s;
+}
+.btn-primary:active { transform:scale(0.98); }
+.btn-primary:disabled { opacity:0.6; cursor:not-allowed; }
+.btn-secondary {
+  width:100%; padding:12px; border:none; border-radius:14px;
+  background:#f0f0f0; color:#666; font-size:13px; font-weight:700;
+  cursor:pointer; margin-top:10px;
+}
+
+/* ── GAME SCREEN ── */
+.game-top {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:12px; flex-wrap:wrap; gap:8px;
+}
+.player-info { font-size:12px; color:#888; font-weight:600; }
+.player-info strong { color:#764ba2; }
+.timer-box {
+  background:#f3f0ff; border-radius:10px; padding:6px 14px;
+  font-size:14px; font-weight:800; color:#764ba2;
+}
+.keys-hint {
+  text-align:center; font-size:11px; color:#aaa;
+  margin-bottom:10px; font-weight:600;
+}
+.maze-wrap {
+  display:flex; justify-content:center;
+  background:#f8f5ff; border-radius:16px; padding:10px;
+  border:2px solid #e0d8ff;
+}
+canvas { border-radius:10px; display:block; }
+
+/* ── WIN / SUBMIT SCREEN ── */
+.win-screen { text-align:center; }
+.trophy { font-size:52px; margin-bottom:8px; }
+.win-screen h2 { font-size:22px; font-weight:900; color:#1a1a2e; }
+.win-screen .sub { font-size:13px; color:#888; margin:6px 0 20px; }
+
+.auto-card {
+  background:linear-gradient(135deg,#f3f0ff,#e8f4ff);
+  border:2px solid #d0c4f7; border-radius:16px;
+  padding:18px; margin-bottom:20px; text-align:left;
+}
+.auto-card .ac-title {
+  font-size:10px; font-weight:800; letter-spacing:2px;
+  color:#764ba2; text-transform:uppercase; margin-bottom:14px;
+  display:flex; align-items:center; gap:6px;
+}
+.auto-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 14px; background:#fff; border-radius:10px;
+  margin-bottom:8px; border:1px solid #e8e4ff;
+}
+.auto-row:last-child { margin-bottom:0; }
+.auto-row .ar-label { font-size:11px; color:#aaa; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
+.auto-row .ar-val   { font-size:14px; color:#333; font-weight:800; }
+.auto-row .ar-badge {
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  color:#fff; font-size:10px; font-weight:800;
+  padding:2px 8px; border-radius:8px; margin-left:6px;
+}
+
+.submit-info {
+  font-size:11px; color:#aaa; text-align:center; margin-top:-10px; margin-bottom:16px;
+}
+
+/* success */
+.success-screen { text-align:center; }
+.success-screen .big { font-size:52px; margin-bottom:10px; }
+.success-screen h2  { font-size:22px; font-weight:900; color:#1a1a2e; }
+.success-screen p   { font-size:13px; color:#888; margin:8px 0 20px; }
+.success-ref {
+  background:#e8faf0; border:2px solid #34c77b; border-radius:14px;
+  padding:14px; font-size:13px; color:#34c77b; font-weight:700; margin-bottom:20px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">📅 TGIF · Last Friday of the Month</div>
+  <h1>🏠 Find My Home!</h1>
+  <p>Fill your details, solve the maze, get auto-submitted! 🧍</p>
+</div>
+
+<div class="card">
+
+  <!-- SCREEN 1: Registration -->
+  <div class="screen active" id="s-form">
+    <div class="form-screen">
+      <h2>Tell us about you 👋</h2>
+      <p class="sub">Fill in your details and submit after solving the puzzle.</p>
+
+      <div class="field">
+        <label>Name <span>*</span></label>
+        <input type="text" id="inp-name" placeholder="Your full name" maxlength="50"
+               oninput="this.value=this.value.replace(/[^a-zA-Z\s]/g,'')">
+        <div class="hint">Alphabets &amp; spaces only · max 50 characters</div>
+        <div class="err" id="err-name">Please enter your full name.</div>
+      </div>
+
+      <div class="field">
+        <label>Employee ID <span>*</span></label>
+        <input type="text" id="inp-empid" placeholder="e.g. 1234567890" maxlength="10"
+               oninput="this.value=this.value.replace(/\D/g,'')">
+        <div class="hint">Numbers only · max 10 digits</div>
+        <div class="err" id="err-empid">Please enter a valid Employee ID.</div>
+      </div>
+
+      <div class="field">
+        <label>Location <span>*</span></label>
+        <div class="radio-group">
+          <label class="radio-opt" onclick="selectLoc(this,'Americas')">
+            <input type="radio" name="loc" value="Americas"> <span>🌎 Americas</span>
+          </label>
+          <label class="radio-opt" onclick="selectLoc(this,'UK / MEA')">
+            <input type="radio" name="loc" value="UK / MEA"> <span>🌍 UK / MEA</span>
+          </label>
+          <label class="radio-opt" onclick="selectLoc(this,'India')">
+            <input type="radio" name="loc" value="India"> <span>🇮🇳 India</span>
+          </label>
+          <label class="radio-opt" onclick="selectLoc(this,'APAC')">
+            <input type="radio" name="loc" value="APAC"> <span>🌏 APAC</span>
+          </label>
+        </div>
+        <div class="err" id="err-loc">Please select your location.</div>
+      </div>
+
+      <button class="btn-primary" onclick="startGame()">🚀 Start the Maze!</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: Maze Game -->
+  <div class="screen" id="s-game">
+    <div class="game-top">
+      <div class="player-info">👤 <strong id="disp-name"></strong> &nbsp;·&nbsp; 📍 <strong id="disp-loc"></strong></div>
+      <div class="timer-box">⏱ <span id="timerDisp">00:00</span></div>
+    </div>
+    <!-- Instructions Popup -->
+    <div id="instructionPopup" style="
+      position:fixed; inset:0; background:rgba(0,0,0,0.6);
+      display:flex; align-items:center; justify-content:center;
+      z-index:999; backdrop-filter:blur(4px);
+    ">
+      <div style="
+        background:#fff; border-radius:20px; padding:24px 22px;
+        max-width:380px; width:80%; text-align:center;
+        box-shadow:0 30px 80px rgba(0,0,0,0.3);
+        animation: popIn 0.3s ease;
+      ">
+        <div style="font-size:32px; margin-bottom:6px;">🧩</div>
+        <div style="font-size:18px; font-weight:900; color:#1a1a2e; margin-bottom:2px;">How to Play</div>
+        <div style="font-size:12px; color:#888; margin-bottom:16px;">Navigate the maze and reach 🏠 to win!</div>
+
+        <!-- Arrow keys visual -->
+        <div style="margin-bottom:20px;">
+          <div style="font-size:11px; font-weight:800; color:#764ba2; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px;">Use Arrow Keys</div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
+            <div>
+              <span style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; border-radius:10px; font-size:22px; font-weight:900; box-shadow:0 4px 12px rgba(102,126,234,0.4);">↑</span>
+            </div>
+            <div style="display:flex; gap:5px;">
+              <span style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; border-radius:10px; font-size:22px; font-weight:900; box-shadow:0 4px 12px rgba(102,126,234,0.4);">←</span>
+              <span style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; border-radius:10px; font-size:22px; font-weight:900; box-shadow:0 4px 12px rgba(102,126,234,0.4);">↓</span>
+              <span style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; border-radius:10px; font-size:22px; font-weight:900; box-shadow:0 4px 12px rgba(102,126,234,0.4);">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- OR divider -->
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+          <div style="flex:1; height:1px; background:#e8e8e8;"></div>
+          <span style="font-size:12px; color:#aaa; font-weight:700;">OR</span>
+          <div style="flex:1; height:1px; background:#e8e8e8;"></div>
+        </div>
+
+        <!-- WASD keys -->
+        <div style="margin-bottom:24px;">
+          <div style="font-size:12px; font-weight:800; color:#764ba2; letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;">Use W A S D Keys</div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+            <div>
+              <span style="display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px; background:#1a1a2e; color:#fff; border-radius:12px; font-size:22px; font-weight:900; box-shadow:0 4px 12px rgba(0,0,0,0.2);">W</span>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <span style="display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px; background:#1a1a2e; color:#fff; border-radius:12px; font-size:22px; font-weight:900; box-shadow:0 4px 12px rgba(0,0,0,0.2);">A</span>
+              <span style="display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px; background:#1a1a2e; color:#fff; border-radius:12px; font-size:22px; font-weight:900; box-shadow:0 4px 12px rgba(0,0,0,0.2);">S</span>
+              <span style="display:inline-flex; align-items:center; justify-content:center; width:52px; height:52px; background:#1a1a2e; color:#fff; border-radius:12px; font-size:22px; font-weight:900; box-shadow:0 4px 12px rgba(0,0,0,0.2);">D</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#f3f0ff; border-radius:12px; padding:12px; margin-bottom:20px; font-size:13px; color:#764ba2; font-weight:700;">
+          🏠 Navigate to the house at the bottom-right corner to win!
+        </div>
+
+        <button onclick="closeInstructions()" style="
+          width:100%; padding:14px; border:none; border-radius:12px;
+          background:linear-gradient(135deg,#667eea,#764ba2);
+          color:#fff; font-size:16px; font-weight:800;
+          cursor:pointer; letter-spacing:0.5px;
+          box-shadow:0 6px 20px rgba(102,126,234,0.35);
+        ">🚀 Let's Go!</button>
+      </div>
+    </div>
+    <style>
+      @keyframes popIn {
+        from { transform: scale(0.8); opacity: 0; }
+        to   { transform: scale(1);   opacity: 1; }
+      }
+    </style>
+    <div class="maze-wrap">
+      <canvas id="mazeCanvas"></canvas>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Win + Auto-filled Submit -->
+  <div class="screen" id="s-win">
+    <div class="win-screen">
+      <div class="trophy">🎉</div>
+      <h2>You Found Home!</h2>
+      <p class="sub">Great job navigating the maze! Your details have been captured automatically.</p>
+
+      <div class="auto-card">
+        <div class="ac-title">✅ Auto-Captured Submission Details</div>
+        <div class="auto-row">
+          <div><div class="ar-label">👤 Name</div><div class="ar-val" id="w-name"></div></div>
+        </div>
+        <div class="auto-row">
+          <div><div class="ar-label">🆔 Employee ID</div><div class="ar-val" id="w-empid"></div></div>
+        </div>
+        <div class="auto-row">
+          <div><div class="ar-label">📍 Location</div><div class="ar-val" id="w-loc"></div></div>
+        </div>
+        <div class="auto-row">
+          <div><div class="ar-label">⏱ Time Taken</div><div class="ar-val" id="w-time"></div></div>
+          <span class="ar-badge">AUTO</span>
+        </div>
+        <div class="auto-row">
+          <div><div class="ar-label">📅 Completed On</div><div class="ar-val" id="w-date"></div></div>
+          <span class="ar-badge">AUTO</span>
+        </div>
+      </div>
+
+      <div class="submit-info">🔒 All details above are auto-captured — just click Submit!</div>
+      <button class="btn-primary" id="btnSubmit" onclick="submitEntry()">📨 Submit My Entry</button>
+      <button class="btn-secondary" onclick="retryMaze()">🔄 Retry Maze</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: Success -->
+  <div class="screen" id="s-success">
+    <div class="success-screen">
+      <div class="big">🏆</div>
+      <h2>You Did It!</h2>
+      <p>Copy your answers below into the MS Form — it takes just 10 seconds!</p>
+
+      <!-- Cheat sheet -->
+      <div style="background:#f3f0ff;border:2px solid #d0c4f7;border-radius:16px;padding:16px;margin-bottom:14px;text-align:left;">
+        <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:#764ba2;text-transform:uppercase;margin-bottom:12px;">📋 Your Answers — Copy These into the Form</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:10px;padding:10px 14px;border:1px solid #e8e4ff;">
+            <span style="font-size:11px;color:#aaa;font-weight:700;text-transform:uppercase;">1. Name</span>
+            <span style="font-size:14px;color:#333;font-weight:800;" id="cs-name"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:10px;padding:10px 14px;border:1px solid #e8e4ff;">
+            <span style="font-size:11px;color:#aaa;font-weight:700;text-transform:uppercase;">2. Employee ID</span>
+            <span style="font-size:14px;color:#333;font-weight:800;" id="cs-empid"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:10px;padding:10px 14px;border:1px solid #e8e4ff;">
+            <span style="font-size:11px;color:#aaa;font-weight:700;text-transform:uppercase;">3. Location</span>
+            <span style="font-size:14px;color:#333;font-weight:800;" id="cs-loc"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:10px;padding:10px 14px;border:1px solid #e8e4ff;">
+            <span style="font-size:11px;color:#aaa;font-weight:700;text-transform:uppercase;">4. Time Taken</span>
+            <span style="font-size:14px;color:#764ba2;font-weight:800;" id="cs-time"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:10px;padding:10px 14px;border:1px solid #e8e4ff;">
+            <span style="font-size:11px;color:#aaa;font-weight:700;text-transform:uppercase;">5. Completed On</span>
+            <span style="font-size:13px;color:#333;font-weight:700;" id="cs-date"></span>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:11px;color:#aaa;margin-bottom:14px;">👆 Keep this screen open while you fill the form in the new tab</div>
+      <div class="success-ref" id="refBox"></div>
+      <button class="btn-primary" onclick="openForm()">📋 Open MS Form →</button>
+      <button class="btn-secondary" onclick="playAgain()">🎮 Play Again</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── STATE ──
+let user = {}, timerInterval, elapsed = 0, submitted = [];
+
+// ── LOCATION SELECT ──
+function selectLoc(el, val) {
+  document.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  user.loc = val;
+}
+
+// ── SCREEN SWITCH ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── VALIDATION ──
+function closeInstructions() {
+  document.getElementById('instructionPopup').style.display = 'none';
+}
+
+function startGame() {
+  const name  = document.getElementById('inp-name').value.trim();
+  const empid = document.getElementById('inp-empid').value.trim();
+  let ok = true;
+  const show = (id, v) => document.getElementById(id).style.display = v ? 'block' : 'none';
+
+  if (!name || name.length < 2) { show('err-name', true);  ok = false; } else show('err-name', false);
+  if (!empid || empid.length < 4) { show('err-empid', true); ok = false; } else show('err-empid', false);
+  if (!user.loc) { show('err-loc', true);  ok = false; } else show('err-loc', false);
+  if (!ok) return;
+
+  user.name  = name;
+  user.empid = empid;
+  document.getElementById('disp-name').textContent = name;
+  document.getElementById('disp-loc').textContent  = user.loc;
+
+  showScreen('s-game');
+  document.getElementById('instructionPopup').style.display = 'flex';
+  initMaze();
+  startTimer();
+}
+
+// ── TIMER ──
+function startTimer() {
+  elapsed = 0; clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    elapsed++;
+    const m = String(Math.floor(elapsed/60)).padStart(2,'0');
+    const s = String(elapsed%60).padStart(2,'0');
+    document.getElementById('timerDisp').textContent = `${m}:${s}`;
+  }, 1000);
+}
+function stopTimer() { clearInterval(timerInterval); }
+function fmtTime(sec) {
+  const m = String(Math.floor(sec/60)).padStart(2,'0');
+  const s = String(sec%60).padStart(2,'0');
+  return `${m} min ${s} sec`;
+}
+
+// ── MAZE ──
+const COLS=13, ROWS=13, CELL=34;
+let grid=[], player={r:0,c:0}, trail=new Set();
+
+function mk(r,c){ return {r,c,walls:{N:1,S:1,E:1,W:1},vis:0}; }
+function opp(d){ return {N:'S',S:'N',E:'W',W:'E'}[d]; }
+function nbr(r,c,d){ return {N:[r-1,c],S:[r+1,c],E:[r,c+1],W:[r,c-1]}[d]; }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ let j=~~(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function initMaze(){
+  grid=[];
+  for(let r=0;r<ROWS;r++){ grid[r]=[]; for(let c=0;c<COLS;c++) grid[r][c]=mk(r,c); }
+  carve(0,0); player={r:0,c:0}; trail=new Set();
+  const cv=document.getElementById('mazeCanvas');
+  cv.width=COLS*CELL; cv.height=ROWS*CELL;
+  draw();
+}
+
+function carve(r,c){
+  grid[r][c].vis=1;
+  for(const d of shuffle(['N','S','E','W'])){
+    const [nr,nc]=nbr(r,c,d);
+    if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&!grid[nr][nc].vis){
+      grid[r][c].walls[d]=0; grid[nr][nc].walls[opp(d)]=0;
+      carve(nr,nc);
+    }
+  }
+}
+
+function draw(){
+  const cv=document.getElementById('mazeCanvas');
+  const ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,cv.width,cv.height);
+
+  // Background
+  ctx.fillStyle='#faf8ff'; ctx.fillRect(0,0,cv.width,cv.height);
+
+  // Goal cell (bottom-right) - darker green
+  ctx.fillStyle='#b2f0d0';
+  ctx.fillRect((COLS-1)*CELL+1,(ROWS-1)*CELL+1,CELL-2,CELL-2);
+
+  // Start cell - darker blue
+  ctx.fillStyle='rgba(102,126,234,0.25)';
+  ctx.beginPath(); ctx.roundRect(1,1,CELL-2,CELL-2,4); ctx.fill();
+
+  // Trail
+  ctx.fillStyle='rgba(102,126,234,0.45)';
+  for(const k of trail){
+    const [tr,tc]=k.split(',').map(Number);
+    ctx.beginPath();
+    ctx.roundRect(tc*CELL+3,tr*CELL+3,CELL-6,CELL-6,4);
+    ctx.fill();
+    // Add a dot in center for extra visibility
+    ctx.fillStyle='rgba(118,75,162,0.6)';
+    ctx.beginPath();
+    ctx.arc(tc*CELL+CELL/2,tr*CELL+CELL/2,4,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle='rgba(102,126,234,0.45)';
+  }
+
+  // Walls
+  ctx.strokeStyle='#8b7fd4'; ctx.lineWidth=2; ctx.lineCap='round';
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    const x=c*CELL, y=r*CELL, w=grid[r][c].walls;
+    ctx.beginPath();
+    if(w.N){ ctx.moveTo(x,y); ctx.lineTo(x+CELL,y); }
+    if(w.S){ ctx.moveTo(x,y+CELL); ctx.lineTo(x+CELL,y+CELL); }
+    if(w.W){ ctx.moveTo(x,y); ctx.lineTo(x,y+CELL); }
+    if(w.E){ ctx.moveTo(x+CELL,y); ctx.lineTo(x+CELL,y+CELL); }
+    ctx.stroke();
+  }
+
+  // Emojis
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font=`${CELL*0.62}px serif`;
+  ctx.fillText('🏠',(COLS-1)*CELL+CELL/2,(ROWS-1)*CELL+CELL/2);
+  ctx.fillText('🧍', player.c*CELL+CELL/2, player.r*CELL+CELL/2+2);
+}
+
+// ── MOVEMENT ──
+document.addEventListener('keydown', e => {
+  if(!document.getElementById('s-game').classList.contains('active')) return;
+  const map={ArrowUp:'N',ArrowDown:'S',ArrowRight:'E',ArrowLeft:'W',
+             w:'N',s:'S',d:'E',a:'W',W:'N',S:'S',D:'E',A:'W'};
+  const dir=map[e.key]; if(!dir) return;
+  e.preventDefault();
+  const {r,c}=player;
+  if(grid[r][c].walls[dir]) return;
+  const [nr,nc]=nbr(r,c,dir);
+  if(nr<0||nr>=ROWS||nc<0||nc>=COLS) return;
+  trail.add(`${r},${c}`);
+  player={r:nr,c:nc};
+  draw();
+  if(nr===ROWS-1&&nc===COLS-1) setTimeout(onWin,250);
+});
+
+// ── WIN ──
+function onWin(){
+  stopTimer();
+  const now = new Date();
+  user.timeTaken = fmtTime(elapsed);
+  user.completedOn = now.toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'});
+
+  document.getElementById('w-name').textContent  = user.name;
+  document.getElementById('w-empid').textContent = user.empid;
+  document.getElementById('w-loc').textContent   = user.loc;
+  document.getElementById('w-time').textContent  = user.timeTaken;
+  document.getElementById('w-date').textContent  = user.completedOn;
+
+  showScreen('s-win');
+}
+
+// ── SUBMIT ──
+function submitEntry(){
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.textContent = '⏳ Opening MS Form...';
+  setTimeout(() => {
+    showScreen('s-success');
+    const ref = 'TGIF-' + Date.now().toString().slice(-6);
+    document.getElementById('refBox').innerHTML =
+      `✅ Reference ID: <strong>${ref}</strong><br>
+       👤 ${user.name} &nbsp;·&nbsp; 🆔 ${user.empid} &nbsp;·&nbsp; 📍 ${user.loc}<br>
+       ⏱ ${user.timeTaken} &nbsp;·&nbsp; 📅 ${user.completedOn}`;
+    // Populate cheat-sheet
+    document.getElementById('cs-name').textContent  = user.name;
+    document.getElementById('cs-empid').textContent = user.empid;
+    document.getElementById('cs-loc').textContent   = user.loc;
+    document.getElementById('cs-time').textContent  = user.timeTaken;
+    document.getElementById('cs-date').textContent  = user.completedOn;
+  }, 800);
+}
+
+function openForm(){
+  const base = 'https://forms.office.com/Pages/ResponsePage.aspx?id=B8QI3rkZfUKf6O3yVDAMpwszpSdBHIBErwoOUy-sLLFUMlNUTjk1T01aWEFLOVhDMkRYRFFSQVEzTS4u';
+  const params = new URLSearchParams({
+    'rf2f04fe382d14e9c97412fb2aa6153d3': user.name,
+    'r5c175bd798ab48b1a2a87e113a20f04c': user.empid,
+    'rcc74a45b4b0846f9bba6b0026a07b4a3': user.loc,
+    'r7ba2eeb78a174a41bdc990b3c5c4372c': user.timeTaken,
+  });
+  window.open(`${base}&${params.toString()}`, '_blank');
+}
+
+function retryMaze(){
+  showScreen('s-game');
+  initMaze(); startTimer();
+}
+
+function playAgain(){
+  user={}; elapsed=0;
+  document.getElementById('inp-name').value='';
+  document.getElementById('inp-empid').value='';
+  document.querySelectorAll('.radio-opt').forEach(o=>o.classList.remove('selected'));
+  showScreen('s-form');
+}
+</script>
+</body>
+</html>
