@@ -469,19 +469,30 @@ async function sendToMSForms(name, empid, loc, timeTaken){
   }
 }
 
-// ── SUBMIT ──
+// ── SUBMIT via prefill URL ──
 function submitEntry(){
   const btn=document.getElementById('btnSubmit');
-  btn.disabled=true; btn.textContent='⏳ Submitting...';
-  sendToMSForms(user.name,user.empid,user.loc,user.timeTaken).then(success=>{
-    const ref='TGIF-'+Date.now().toString().slice(-6);
-    showScreen('s-success');
-    document.getElementById('refBox').innerHTML=
-      `${success?'📨 Response recorded in MS Form! ✅':'⚠️ Please retry.'}<br><br>
-       ✅ Ref: <strong>${ref}</strong><br>
-       👤 ${user.name} &nbsp;·&nbsp; 🆔 ${user.empid} &nbsp;·&nbsp; 📍 ${user.loc}<br>
-       ⏱ ${user.timeTaken} &nbsp;·&nbsp; 📅 ${user.completedOn}`;
+  btn.disabled=true; btn.textContent='⏳ Opening Form...';
+
+  const base='https://forms.office.com/Pages/ResponsePage.aspx?id=B8QI3rkZfUKf6O3yVDAMpwszpSdBHIBErwoOUy-sLLFUQUVJWkkyOUlLRjZCRks0MUQzNjdCVFpWVC4u';
+  const params=new URLSearchParams({
+    'rf2f04fe382d14e9c97412fb2aa6153d3': user.name,
+    'r5c175bd798ab48b1a2a87e113a20f04c': user.empid,
+    'rcc74a45b4b0846f9bba6b0026a07b4a3': user.loc,
+    'r7ba2eeb78a174a41bdc990b3c5c4372c': user.timeTaken
   });
+
+  const ref='TGIF-'+Date.now().toString().slice(-6);
+  showScreen('s-success');
+  document.getElementById('refBox').innerHTML=
+    `✅ Ref: <strong>${ref}</strong><br>
+     👤 ${user.name} &nbsp;·&nbsp; 🆔 ${user.empid} &nbsp;·&nbsp; 📍 ${user.loc}<br>
+     ⏱ ${user.timeTaken} &nbsp;·&nbsp; 📅 ${user.completedOn}<br><br>
+     📋 <strong>MS Form will open with your details pre-filled — just click Submit!</strong>`;
+
+  setTimeout(()=>{
+    window.open(`${base}&${params.toString()}`, '_blank');
+  }, 1000);
 }
 
 function retryMaze(){
