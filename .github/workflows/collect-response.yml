@@ -1,0 +1,20 @@
+name: Collect Maze Response
+on:
+  repository_dispatch:
+    types: [maze-response]
+jobs:
+  save-response:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Save Response
+        run: |
+          echo "${{ github.event.client_payload.name }},${{ github.event.client_payload.empid }},${{ github.event.client_payload.location }},${{ github.event.client_payload.timeTaken }},$(date)" >> responses.csv
+      - uses: actions/checkout@v3
+      - name: Commit
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add responses.csv
+          git commit -m "New maze response"
+          git push
