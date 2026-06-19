@@ -6,157 +6,153 @@
 <title>TGIF – Find My Home 🏠</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body {
+html, body {
+  height:100%; width:100%;
   font-family:'Segoe UI',sans-serif;
   background:linear-gradient(135deg,#f5f0ff 0%,#e8f4ff 100%);
-  min-height:100vh; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; padding:20px;
+  overflow:hidden;
 }
-.header { text-align:center; margin-bottom:16px; }
+.wrapper {
+  height:100vh; width:100vw;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:10px;
+}
+
+/* Header */
+.header { text-align:center; margin-bottom:6px; }
 .badge {
   display:inline-block; background:linear-gradient(135deg,#667eea,#764ba2);
-  color:#fff; font-size:10px; font-weight:800; letter-spacing:3px;
-  padding:4px 16px; border-radius:20px; margin-bottom:8px; text-transform:uppercase;
+  color:#fff; font-size:9px; font-weight:800; letter-spacing:2px;
+  padding:3px 12px; border-radius:20px; margin-bottom:4px; text-transform:uppercase;
 }
-.header h1 { font-size:26px; font-weight:900; color:#333; }
-.header p  { font-size:12px; color:#888; margin-top:4px; }
+.header h1 { font-size:20px; font-weight:900; color:#333; }
+
+/* Card */
 .card {
-  background:#fff; border-radius:20px; padding:28px;
-  width:100%; max-width:560px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.12);
+  background:#fff; border-radius:16px; padding:16px;
+  width:100%; max-width:500px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.12);
 }
+
 .screen { display:none; }
-.screen.active { display:block; }
+.screen.active { display:flex; flex-direction:column; }
+
+/* Start screen */
+.start-screen { text-align:center; }
+.start-screen h2 { font-size:18px; font-weight:900; color:#1a1a2e; margin-bottom:6px; }
+.start-screen p { font-size:12px; color:#888; margin-bottom:14px; }
+.rules {
+  background:#f3f0ff; border-radius:12px; padding:12px;
+  text-align:left; margin-bottom:14px;
+}
+.rule {
+  display:flex; align-items:center; gap:8px;
+  font-size:12px; color:#555; font-weight:600;
+  padding:4px 0; border-bottom:1px solid #e8e4ff;
+}
+.rule:last-child { border-bottom:none; }
+.rule span { font-size:16px; }
 
 /* Game screen */
-.game-top {
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:12px; flex-wrap:wrap; gap:8px;
-}
 .timer-box {
-  background:#f3f0ff; border-radius:10px; padding:8px 18px;
-  font-size:16px; font-weight:800; color:#764ba2; width:100%;
-  text-align:center;
+  background:#f3f0ff; border-radius:10px; padding:6px 14px;
+  font-size:14px; font-weight:800; color:#764ba2;
+  text-align:center; margin-bottom:8px;
 }
 .maze-wrap {
-  display:flex; justify-content:center;
-  background:#f8f5ff; border-radius:16px; padding:10px;
-  border:2px solid #e0d8ff;
+  display:flex; justify-content:center; align-items:center;
+  background:#f8f5ff; border-radius:12px; padding:6px;
+  border:2px solid #e0d8ff; flex:1;
 }
-canvas { border-radius:10px; display:block; }
+canvas { border-radius:8px; display:block; max-width:100%; }
 
 /* Win screen */
 .win-screen { text-align:center; }
-.trophy { font-size:52px; margin-bottom:8px; }
-.win-screen h2 { font-size:22px; font-weight:900; color:#1a1a2e; }
-.win-screen .sub { font-size:13px; color:#888; margin:6px 0 20px; }
-
+.trophy { font-size:40px; margin-bottom:4px; }
+.win-screen h2 { font-size:18px; font-weight:900; color:#1a1a2e; }
+.win-screen .sub { font-size:12px; color:#888; margin:4px 0 12px; }
 .time-display {
   background:linear-gradient(135deg,#667eea,#764ba2);
-  border-radius:16px; padding:20px; margin-bottom:20px;
-  text-align:center;
+  border-radius:12px; padding:14px; margin-bottom:12px;
 }
-.time-display .tl { font-size:11px; color:rgba(255,255,255,0.7); font-weight:700; letter-spacing:2px; text-transform:uppercase; }
-.time-display .tv { font-size:36px; font-weight:900; color:#fff; margin-top:4px; }
-.time-display .ts { font-size:12px; color:rgba(255,255,255,0.7); margin-top:4px; }
-
+.time-display .tl { font-size:10px; color:rgba(255,255,255,0.7); font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+.time-display .tv { font-size:28px; font-weight:900; color:#fff; margin-top:2px; }
+.time-display .ts { font-size:11px; color:rgba(255,255,255,0.7); margin-top:2px; }
 .info-box {
-  background:#f3f0ff; border:2px solid #d0c4f7;
-  border-radius:14px; padding:16px; margin-bottom:20px;
-  font-size:13px; color:#555; line-height:1.7; text-align:left;
+  background:#f3f0ff; border:1.5px solid #d0c4f7;
+  border-radius:12px; padding:12px; margin-bottom:12px;
+  font-size:12px; color:#555; line-height:1.6; text-align:left;
 }
 .info-box strong { color:#764ba2; }
 
+/* Buttons */
 .btn-primary {
-  width:100%; padding:14px; border:none; border-radius:14px;
+  width:100%; padding:12px; border:none; border-radius:12px;
   background:linear-gradient(135deg,#667eea,#764ba2);
-  color:#fff; font-size:15px; font-weight:800;
+  color:#fff; font-size:14px; font-weight:800;
   cursor:pointer; letter-spacing:0.5px;
-  box-shadow:0 6px 20px rgba(102,126,234,0.35);
-  transition:transform 0.1s;
+  box-shadow:0 4px 14px rgba(102,126,234,0.35);
 }
-.btn-primary:active { transform:scale(0.98); }
 .btn-secondary {
-  width:100%; padding:12px; border:none; border-radius:14px;
-  background:#f0f0f0; color:#666; font-size:13px; font-weight:700;
-  cursor:pointer; margin-top:10px;
+  width:100%; padding:10px; border:none; border-radius:12px;
+  background:#f0f0f0; color:#666; font-size:12px; font-weight:700;
+  cursor:pointer; margin-top:8px;
 }
-
-/* Start screen */
-.start-screen { text-align:center; padding:10px 0; }
-.start-screen h2 { font-size:22px; font-weight:900; color:#1a1a2e; margin-bottom:8px; }
-.start-screen p { font-size:13px; color:#888; margin-bottom:24px; line-height:1.6; }
-.rules {
-  background:#f3f0ff; border-radius:14px; padding:16px;
-  text-align:left; margin-bottom:24px;
-}
-.rules .rule {
-  display:flex; align-items:center; gap:10px;
-  font-size:13px; color:#555; font-weight:600;
-  padding:6px 0; border-bottom:1px solid #e8e4ff;
-}
-.rules .rule:last-child { border-bottom:none; }
-.rules .rule span { font-size:18px; }
 </style>
 </head>
 <body>
-
-<div class="header">
-  <div class="badge">📅 TGIF · Last Friday of the Month</div>
-  <h1>🏠 Find My Home!</h1>
-  <p>Navigate the maze and reach home as fast as you can! 🧍</p>
-</div>
-
-<div class="card">
-
-  <!-- SCREEN 1: Start -->
-  <div class="screen active" id="s-start">
-    <div class="start-screen">
-      <h2>Welcome to TGIF Maze! 🧩</h2>
-      <p>Navigate through the maze and reach the 🏠 house.<br>Your time will be recorded — fastest wins!</p>
-      <div class="rules">
-        <div class="rule"><span>⬆️</span> Use Arrow Keys or W A S D to move</div>
-        <div class="rule"><span>🏠</span> Reach the house at bottom-right corner</div>
-        <div class="rule"><span>⏱</span> Timer starts when you click Start</div>
-        <div class="rule"><span>📋</span> Fill MS Form at the end to submit your time</div>
-      </div>
-      <button class="btn-primary" onclick="startGame()">🚀 Start the Maze!</button>
-    </div>
+<div class="wrapper">
+  <div class="header">
+    <div class="badge">📅 TGIF · Last Friday of the Month</div>
+    <h1>🏠 Find My Home!</h1>
   </div>
 
-  <!-- SCREEN 2: Maze -->
-  <div class="screen" id="s-game">
-    <div class="game-top">
-      <div class="timer-box">⏱ Time: <span id="timerDisp">00:00</span> &nbsp;·&nbsp; Reach 🏠 to win!</div>
-    </div>
-    <div class="maze-wrap">
-      <canvas id="mazeCanvas"></canvas>
-    </div>
-  </div>
+  <div class="card">
 
-  <!-- SCREEN 3: Win -->
-  <div class="screen" id="s-win">
-    <div class="win-screen">
-      <div class="trophy">🎉</div>
-      <h2>You Found Home!</h2>
-      <p class="sub">Amazing! Note your time and fill the MS Form below.</p>
-
-      <div class="time-display">
-        <div class="tl">⏱ Your Time Taken</div>
-        <div class="tv" id="win-time"></div>
-        <div class="ts">Note this down before filling the form!</div>
+    <!-- SCREEN 1: Start -->
+    <div class="screen active" id="s-start">
+      <div class="start-screen">
+        <h2>Welcome to TGIF Maze! 🧩</h2>
+        <p>Navigate through the maze and reach 🏠 as fast as you can!</p>
+        <div class="rules">
+          <div class="rule"><span>⬆️</span> Use Arrow Keys or W A S D to move</div>
+          <div class="rule"><span>🏠</span> Reach the house at bottom-right</div>
+          <div class="rule"><span>⏱</span> Timer starts when you click Start</div>
+          <div class="rule"><span>📋</span> Fill MS Form at end to submit your time</div>
+        </div>
+        <button class="btn-primary" onclick="startGame()">🚀 Start the Maze!</button>
       </div>
-
-      <div class="info-box">
-        📋 <strong>Next Step:</strong> Click the button below to open the MS Form.<br>
-        Fill in your <strong>Name, Employee ID, Location</strong> and enter your time <strong id="form-time"></strong> in the Time Taken field!
-      </div>
-
-      <button class="btn-primary" onclick="openForm()">📋 Open MS Form to Submit →</button>
-      <button class="btn-secondary" onclick="retryMaze()">🔄 Try Again for Better Time</button>
     </div>
-  </div>
 
+    <!-- SCREEN 2: Game -->
+    <div class="screen" id="s-game" style="height:calc(100vh - 120px);">
+      <div class="timer-box">⏱ <span id="timerDisp">00:00</span> &nbsp;·&nbsp; Reach 🏠 to win!</div>
+      <div class="maze-wrap" id="mazeWrap">
+        <canvas id="mazeCanvas"></canvas>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: Win -->
+    <div class="screen" id="s-win">
+      <div class="win-screen">
+        <div class="trophy">🎉</div>
+        <h2>You Found Home!</h2>
+        <p class="sub">Note your time and fill the MS Form!</p>
+        <div class="time-display">
+          <div class="tl">⏱ Your Time Taken</div>
+          <div class="tv" id="win-time"></div>
+          <div class="ts">Note this before filling the form!</div>
+        </div>
+        <div class="info-box">
+          📋 <strong>Next Step:</strong> Open the MS Form → Fill Name, Employee ID, Location → Enter your time <strong id="form-time"></strong> in Time Taken field!
+        </div>
+        <button class="btn-primary" onclick="openForm()">📋 Open MS Form to Submit →</button>
+        <button class="btn-secondary" onclick="retryMaze()">🔄 Try Again for Better Time</button>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <!-- Instructions Popup -->
@@ -165,107 +161,95 @@ canvas { border-radius:10px; display:block; }
   display:none; align-items:center; justify-content:center;
   z-index:999; backdrop-filter:blur(4px);
 ">
-  <div style="
-    background:#fff; border-radius:20px; padding:24px 22px;
-    max-width:340px; width:85%; text-align:center;
-    box-shadow:0 30px 80px rgba(0,0,0,0.3);
-    animation: popIn 0.3s ease;
-  ">
-    <div style="font-size:32px; margin-bottom:6px;">🧩</div>
-    <div style="font-size:18px; font-weight:900; color:#1a1a2e; margin-bottom:2px;">How to Play</div>
-    <div style="font-size:12px; color:#888; margin-bottom:16px;">Navigate the maze and reach 🏠 to win!</div>
-    <div style="margin-bottom:14px;">
-      <div style="font-size:11px; font-weight:800; color:#764ba2; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px;">Arrow Keys</div>
-      <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
-        <div>
-          <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px;font-size:22px;font-weight:900;">↑</span>
-        </div>
-        <div style="display:flex;gap:5px;">
-          <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px;font-size:22px;font-weight:900;">←</span>
-          <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px;font-size:22px;font-weight:900;">↓</span>
-          <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px;font-size:22px;font-weight:900;">→</span>
+  <div style="background:#fff;border-radius:20px;padding:20px;max-width:320px;width:85%;text-align:center;animation:popIn 0.3s ease;">
+    <div style="font-size:28px;margin-bottom:4px;">🧩</div>
+    <div style="font-size:17px;font-weight:900;color:#1a1a2e;margin-bottom:2px;">How to Play</div>
+    <div style="font-size:11px;color:#888;margin-bottom:14px;">Navigate the maze and reach 🏠!</div>
+    <div style="margin-bottom:12px;">
+      <div style="font-size:10px;font-weight:800;color:#764ba2;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Arrow Keys</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:8px;font-size:20px;font-weight:900;">↑</span>
+        <div style="display:flex;gap:4px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:8px;font-size:20px;font-weight:900;">←</span>
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:8px;font-size:20px;font-weight:900;">↓</span>
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:8px;font-size:20px;font-weight:900;">→</span>
         </div>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
       <div style="flex:1;height:1px;background:#e8e8e8;"></div>
-      <span style="font-size:12px;color:#aaa;font-weight:700;">OR</span>
+      <span style="font-size:11px;color:#aaa;font-weight:700;">OR</span>
       <div style="flex:1;height:1px;background:#e8e8e8;"></div>
     </div>
-    <div style="margin-bottom:14px;">
-      <div style="font-size:11px; font-weight:800; color:#764ba2; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px;">W A S D Keys</div>
-      <div style="display:flex; flex-direction:column; align-items:center; gap:5px;">
-        <div>
-          <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;background:#1a1a2e;color:#fff;border-radius:10px;font-size:20px;font-weight:900;">W</span>
-        </div>
-        <div style="display:flex;gap:5px;">
-          <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;background:#1a1a2e;color:#fff;border-radius:10px;font-size:20px;font-weight:900;">A</span>
-          <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;background:#1a1a2e;color:#fff;border-radius:10px;font-size:20px;font-weight:900;">S</span>
-          <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;background:#1a1a2e;color:#fff;border-radius:10px;font-size:20px;font-weight:900;">D</span>
+    <div style="margin-bottom:12px;">
+      <div style="font-size:10px;font-weight:800;color:#764ba2;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">W A S D Keys</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;background:#1a1a2e;color:#fff;border-radius:8px;font-size:18px;font-weight:900;">W</span>
+        <div style="display:flex;gap:4px;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;background:#1a1a2e;color:#fff;border-radius:8px;font-size:18px;font-weight:900;">A</span>
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;background:#1a1a2e;color:#fff;border-radius:8px;font-size:18px;font-weight:900;">S</span>
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;background:#1a1a2e;color:#fff;border-radius:8px;font-size:18px;font-weight:900;">D</span>
         </div>
       </div>
     </div>
-    <div style="background:#f3f0ff;border-radius:12px;padding:10px;margin-bottom:16px;font-size:12px;color:#764ba2;font-weight:700;">
+    <div style="background:#f3f0ff;border-radius:10px;padding:8px;margin-bottom:12px;font-size:11px;color:#764ba2;font-weight:700;">
       🏠 Reach the house at bottom-right to win!
     </div>
-    <button onclick="closeInstructions()" style="
-      width:100%; padding:13px; border:none; border-radius:12px;
-      background:linear-gradient(135deg,#667eea,#764ba2);
-      color:#fff; font-size:15px; font-weight:800; cursor:pointer;
-    ">🚀 Let's Go!</button>
+    <button onclick="closeInstructions()" style="width:100%;padding:11px;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:14px;font-weight:800;cursor:pointer;">🚀 Let's Go!</button>
   </div>
 </div>
-<style>
-@keyframes popIn { from{transform:scale(0.8);opacity:0;} to{transform:scale(1);opacity:1;} }
-</style>
+<style>@keyframes popIn{from{transform:scale(0.8);opacity:0;}to{transform:scale(1);opacity:1;}}</style>
 
 <script>
-let timerInterval, elapsed = 0;
+let timerInterval, elapsed=0;
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-function startGame() {
+function startGame(){
   showScreen('s-game');
-  document.getElementById('instructionPopup').style.display = 'flex';
-  initMaze();
-  startTimer();
+  document.getElementById('instructionPopup').style.display='flex';
+  initMaze(); startTimer();
 }
 
-function closeInstructions() {
-  document.getElementById('instructionPopup').style.display = 'none';
+function closeInstructions(){
+  document.getElementById('instructionPopup').style.display='none';
 }
 
-// ── TIMER ──
-function startTimer() {
-  elapsed = 0; clearInterval(timerInterval);
-  timerInterval = setInterval(() => {
+function startTimer(){
+  elapsed=0; clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
     elapsed++;
-    const m = String(Math.floor(elapsed/60)).padStart(2,'0');
-    const s = String(elapsed%60).padStart(2,'0');
-    document.getElementById('timerDisp').textContent = `${m}:${s}`;
-  }, 1000);
+    const m=String(Math.floor(elapsed/60)).padStart(2,'0');
+    const s=String(elapsed%60).padStart(2,'0');
+    document.getElementById('timerDisp').textContent=`${m}:${s}`;
+  },1000);
 }
-function stopTimer() { clearInterval(timerInterval); }
-function fmtTime(sec) {
-  const m = String(Math.floor(sec/60)).padStart(2,'0');
-  const s = String(sec%60).padStart(2,'0');
+function stopTimer(){ clearInterval(timerInterval); }
+function fmtTime(sec){
+  const m=String(Math.floor(sec/60)).padStart(2,'0');
+  const s=String(sec%60).padStart(2,'0');
   return `${m} min ${s} sec`;
 }
 
 // ── MAZE ──
-const COLS=13, ROWS=13, CELL=34;
-let grid=[], player={r:0,c:0}, trail=new Set();
-function mk(r,c){ return{r,c,walls:{N:1,S:1,E:1,W:1},vis:0}; }
-function opp(d){ return{N:'S',S:'N',E:'W',W:'E'}[d]; }
-function nbr(r,c,d){ return{N:[r-1,c],S:[r+1,c],E:[r,c+1],W:[r,c-1]}[d]; }
-function shuffle(a){ for(let i=a.length-1;i>0;i--){ let j=~~(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+let COLS=13,ROWS=13,CELL=32;
+let grid=[],player={r:0,c:0},trail=new Set();
+function mk(r,c){return{r,c,walls:{N:1,S:1,E:1,W:1},vis:0};}
+function opp(d){return{N:'S',S:'N',E:'W',W:'E'}[d];}
+function nbr(r,c,d){return{N:[r-1,c],S:[r+1,c],E:[r,c+1],W:[r,c-1]}[d];}
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=~~(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
 function initMaze(){
+  // Auto-size cell to fit screen
+  const maxW = Math.min(window.innerWidth - 60, 480);
+  const maxH = window.innerHeight - 160;
+  CELL = Math.floor(Math.min(maxW/COLS, maxH/ROWS));
+
   grid=[];
-  for(let r=0;r<ROWS;r++){ grid[r]=[]; for(let c=0;c<COLS;c++) grid[r][c]=mk(r,c); }
+  for(let r=0;r<ROWS;r++){grid[r]=[];for(let c=0;c<COLS;c++)grid[r][c]=mk(r,c);}
   carve(0,0); player={r:0,c:0}; trail=new Set();
   const cv=document.getElementById('mazeCanvas');
   cv.width=COLS*CELL; cv.height=ROWS*CELL; draw();
@@ -276,7 +260,7 @@ function carve(r,c){
   for(const d of shuffle(['N','S','E','W'])){
     const[nr,nc]=nbr(r,c,d);
     if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&!grid[nr][nc].vis){
-      grid[r][c].walls[d]=0; grid[nr][nc].walls[opp(d)]=0; carve(nr,nc);
+      grid[r][c].walls[d]=0;grid[nr][nc].walls[opp(d)]=0;carve(nr,nc);
     }
   }
 }
@@ -285,63 +269,58 @@ function draw(){
   const cv=document.getElementById('mazeCanvas');
   const ctx=cv.getContext('2d');
   ctx.clearRect(0,0,cv.width,cv.height);
-  ctx.fillStyle='#faf8ff'; ctx.fillRect(0,0,cv.width,cv.height);
-
+  ctx.fillStyle='#faf8ff';ctx.fillRect(0,0,cv.width,cv.height);
   ctx.fillStyle='rgba(102,126,234,0.25)';
-  ctx.beginPath(); ctx.roundRect(1,1,CELL-2,CELL-2,4); ctx.fill();
-
+  ctx.beginPath();ctx.roundRect(1,1,CELL-2,CELL-2,4);ctx.fill();
   ctx.fillStyle='#b2f0d0';
   ctx.fillRect((COLS-1)*CELL+1,(ROWS-1)*CELL+1,CELL-2,CELL-2);
-
   ctx.fillStyle='rgba(102,126,234,0.45)';
   for(const k of trail){
     const[tr,tc]=k.split(',').map(Number);
-    ctx.beginPath(); ctx.roundRect(tc*CELL+3,tr*CELL+3,CELL-6,CELL-6,4); ctx.fill();
+    ctx.beginPath();ctx.roundRect(tc*CELL+3,tr*CELL+3,CELL-6,CELL-6,4);ctx.fill();
     ctx.fillStyle='rgba(118,75,162,0.6)';
-    ctx.beginPath(); ctx.arc(tc*CELL+CELL/2,tr*CELL+CELL/2,4,0,Math.PI*2); ctx.fill();
+    ctx.beginPath();ctx.arc(tc*CELL+CELL/2,tr*CELL+CELL/2,4,0,Math.PI*2);ctx.fill();
     ctx.fillStyle='rgba(102,126,234,0.45)';
   }
-
-  ctx.strokeStyle='#8b7fd4'; ctx.lineWidth=2; ctx.lineCap='round';
-  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
-    const x=c*CELL, y=r*CELL, w=grid[r][c].walls;
+  ctx.strokeStyle='#8b7fd4';ctx.lineWidth=2;ctx.lineCap='round';
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const x=c*CELL,y=r*CELL,w=grid[r][c].walls;
     ctx.beginPath();
-    if(w.N){ ctx.moveTo(x,y); ctx.lineTo(x+CELL,y); }
-    if(w.S){ ctx.moveTo(x,y+CELL); ctx.lineTo(x+CELL,y+CELL); }
-    if(w.W){ ctx.moveTo(x,y); ctx.lineTo(x,y+CELL); }
-    if(w.E){ ctx.moveTo(x+CELL,y); ctx.lineTo(x+CELL,y+CELL); }
+    if(w.N){ctx.moveTo(x,y);ctx.lineTo(x+CELL,y);}
+    if(w.S){ctx.moveTo(x,y+CELL);ctx.lineTo(x+CELL,y+CELL);}
+    if(w.W){ctx.moveTo(x,y);ctx.lineTo(x,y+CELL);}
+    if(w.E){ctx.moveTo(x+CELL,y);ctx.lineTo(x+CELL,y+CELL);}
     ctx.stroke();
   }
-
-  ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=6;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=6;
   ctx.font=`bold ${CELL*0.78}px serif`;
   ctx.globalAlpha=1.0;
   ctx.fillText('🏠',(COLS-1)*CELL+CELL/2,(ROWS-1)*CELL+CELL/2);
   ctx.fillText('🧍',player.c*CELL+CELL/2,player.r*CELL+CELL/2+2);
-  ctx.shadowBlur=0; ctx.shadowColor='transparent';
+  ctx.shadowBlur=0;ctx.shadowColor='transparent';
 }
 
-document.addEventListener('keydown', e => {
-  if(!document.getElementById('s-game').classList.contains('active')) return;
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('s-game').classList.contains('active'))return;
   const map={ArrowUp:'N',ArrowDown:'S',ArrowRight:'E',ArrowLeft:'W',
              w:'N',s:'S',d:'E',a:'W',W:'N',S:'S',D:'E',A:'W'};
-  const dir=map[e.key]; if(!dir) return;
+  const dir=map[e.key];if(!dir)return;
   e.preventDefault();
   const{r,c}=player;
-  if(grid[r][c].walls[dir]) return;
+  if(grid[r][c].walls[dir])return;
   const[nr,nc]=nbr(r,c,dir);
-  if(nr<0||nr>=ROWS||nc<0||nc>=COLS) return;
+  if(nr<0||nr>=ROWS||nc<0||nc>=COLS)return;
   trail.add(`${r},${c}`);
-  player={r:nr,c:nc}; draw();
-  if(nr===ROWS-1&&nc===COLS-1) setTimeout(onWin,250);
+  player={r:nr,c:nc};draw();
+  if(nr===ROWS-1&&nc===COLS-1)setTimeout(onWin,250);
 });
 
 function onWin(){
   stopTimer();
-  const t = fmtTime(elapsed);
-  document.getElementById('win-time').textContent = t;
-  document.getElementById('form-time').textContent = t;
+  const t=fmtTime(elapsed);
+  document.getElementById('win-time').textContent=t;
+  document.getElementById('form-time').textContent=t;
   showScreen('s-win');
 }
 
@@ -352,8 +331,12 @@ function openForm(){
 function retryMaze(){
   trail=new Set();
   showScreen('s-game');
-  initMaze(); startTimer();
+  initMaze();startTimer();
 }
+
+window.addEventListener('resize', ()=>{
+  if(document.getElementById('s-game').classList.contains('active')) initMaze();
+});
 </script>
 </body>
 </html>
